@@ -102,6 +102,10 @@ def get_year_month(from_date):
 	return year_month
 
 def get_rate_value(dataset, year_month):
+	
+	#REMOVE WHEN DATE VALUE IS GIVEN
+	if year_month == {"2016": "December"}:
+		return 1.00
 	year = list(year_month.keys())[0]
 	month = year_month[year]
 	return dataset[year][month]
