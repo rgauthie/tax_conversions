@@ -80,7 +80,6 @@ def get_realized():
 			rows.append(row)
 
 
-
 	with open("./input_data/"+headless_file_name, "w", encoding='utf-8', newline='') as out:
 		csvwriter = csv.writer(out)
 		csvwriter.writerow(fields)
