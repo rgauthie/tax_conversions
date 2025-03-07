@@ -40,7 +40,14 @@ Month: rate value
 January: 0.000  
 February: 0.000  
 !2024  
+March: 0.0000  
+May: 0.0  
+June: 0.000  
+August: 0.0  
+October: 0.00  
 December: 0.0  
+!2022  
+...
 >>>
 
 3. Ensure there is no blank line at top or bottom of file, then save.
