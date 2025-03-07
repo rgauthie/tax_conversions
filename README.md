@@ -24,6 +24,20 @@
 
 ** if there are any issues, try deleting the files with `<last year>-<this year>` in the title in the input_data folder at: `../tax_conversions/tax_conversions_env/input_data/`
 
+# Adding additional conversion rates
+
+1. Open and edit *exchange_rates.txt* at: `../tax_conversions/tax_conversions_env/exchange_rates/`
+   
+2. Add in a new line of data following the format:
+   	- `!<year>
+   	   <Month>: <rate value>
+   	  ...`
+   	- Example: `!2025
+   	  	    January: 0.000
+   	  	    February: 0.000
+   	  	    !2024
+   		    December: 0.0`
+
 
 ## Let me know of any additional features you need or any issues you run into! I only tested it on Windows, so I may need to bugfix for MacOS (although I made sure the libraries used are compatible on both). 
 
