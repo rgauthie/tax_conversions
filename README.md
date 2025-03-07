@@ -50,7 +50,7 @@ December: 0.0
 ...
 >>>
 
-3. Ensure there is no blank line at top or bottom of file, then save.
+3. Ensure there is no blank line at top or bottom of file, or anywhere between lines, then save.
 
 
 ## Let me know of any additional features you need or any issues you run into! I only tested it on Windows, so I may need to bugfix for MacOS (although I made sure the libraries used are compatible on both). 
