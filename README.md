@@ -30,17 +30,17 @@
    
 2. Add in a new line of data following the format:
 <blockquote>
-!year	
-Month: rate value
-...
+!year  
+Month: rate value  
+...  
 </blockquote>
 	- Example:
 <blockquote>
-!2025	
-January: 0.000
-February: 0.000
-!2024
-December: 0.0
+!2025  
+January: 0.000  
+February: 0.000  
+!2024  
+December: 0.0  
 </blockquote>
 
 3. Ensure there is no blank line at top or bottom of file, then save.
