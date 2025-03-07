@@ -63,10 +63,22 @@ def convert_action(event=None):
 	progress_widget.place(relx=0.5, rely=0.5, anchor=CENTER)
 	progress_bar()
 	progress_widget.step(99.9)
-	convert_main()
+	success = True
+	try:
+		convert_main()
+	except:
+		success = False
+		err_label = "❌ Unsuccessful. Error occurred, may be missing a month's exchange rate."
+		add_rate_label = "If a rate is missing, add it to exchange_rates.txt and try again."
+
 	convert_label = labels[1]
-	convert_label.place(relx=0.5, rely=0.4, anchor=CENTER)
 	location_label = labels[2]
+	if not success:
+		convert_label.config(text=err_label)
+		convert_label.config(fg="red")
+		location_label.config(text=add_rate_label)
+		
+	convert_label.place(relx=0.5, rely=0.4, anchor=CENTER)
 	location_label.place(relx=0.5, rely=0.6, anchor=CENTER)
 
 
