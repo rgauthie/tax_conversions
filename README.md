@@ -1,8 +1,8 @@
 # Installation
 
 1. Download/Install Python 3.11.4   -- ENSURE ALL OPTIONS OTHER THAN [experimental] SELECTED ON INSTALL
-   	1a. Download from: https://www.python.org/downloads/release/python-3114/
-   	1b. Installation instructions: https://docs.python.org/3/using/mac.html
+   	- Download from: https://www.python.org/downloads/release/python-3114/
+	- Installation instructions: https://docs.python.org/3/using/mac.html
 				
 3. Download this repository's code -- 
 				2a. Green [<> Code] button above ^, then download ZIP. It might be flagged as a virus by chrome because it is a private code repository so it cannot be checked by  public scanners. If so, just turn off chrome safe browsing setting or change browser.
