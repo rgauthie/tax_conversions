@@ -8,18 +8,17 @@
             "May": 1.2457,
             "June": 1.2709,
             "July": 1.2732,
-            "August": 1.3033,
             "September": 1.3032,
             "October": 1.3211,
             "November": 1.2952,
-            "December": 1.2662
+            "December": 1.2662,
+            "August": 1.3033
         },
         "2023": {
             "January": 1.2406,
             "February": 1.2392,
             "March": 1.2002,
             "April": 1.2231,
-            "May": 1.245,
             "June": 1.2366,
             "July": 1.2732,
             "August": 1.2886,
@@ -49,7 +48,6 @@
             "April": 1.3721,
             "May": 1.393,
             "June": 1.4146,
-            "July": 1.3969,
             "August": 1.3674,
             "September": 1.3757,
             "October": 1.3646,
@@ -80,7 +78,8 @@
             "December": 1.3284
         },
         "2016": {
-            "January": 1.5003
+            "January": 1.5003,
+            "December": 1.2399
         }
     }
 }

@@ -103,7 +103,10 @@ def get_year_month(from_date):
 def get_rate_value(dataset, year_month):
 	year = list(year_month.keys())[0]
 	month = year_month[year]
-	return dataset[year][month]
+	try:
+		return dataset[year][month]
+	except:
+		raise Exception("ERROR: missing exchange rate for "+str(month)+" "+str(year))
 
 def calc_usd_gbp(usd_value_str, exchange_rate):
 	if ',' in usd_value_str:
@@ -122,6 +125,35 @@ def convert_float_to_currency(value, currency="gbp"):
 	if negative:
 		equiv = "-"+equiv
 	return equiv
+
+def pop_from_json_to_txt():
+	years = []
+	with open("./exchange_rates/exchange_rates.json", "r") as f:
+		data = json.load(f)
+		rates = data["rates"]
+		for year in rates:
+			to_add = ""
+			fmt_year = "!"+year+"\n"
+			to_add += fmt_year
+			for month in rates[year]:
+				fmt_month = month+": "+str(rates[year][month])+"\n"
+				to_add += fmt_month
+			years.append(to_add)
+	years = "\n".join(years)
+	years = "".join([line for line in years.splitlines(True) if line.strip()])
+	years = years.strip()
+
+	with open("./exchange_rates/exchange_rates.txt", "w") as f:
+		f.write(years)
+
+def save_rate(rate_value, month, year):
+	populate_rates()
+	with open("./exchange_rates/exchange_rates.json", "r") as f:
+		data = json.load(f)
+		data["rates"][year][month] = rate_value
+	with open("./exchange_rates/exchange_rates.json", "w") as f:
+		json.dump(data, f, indent=4, sort_keys=False)
+	pop_from_json_to_txt()
 
 def manip_data():
 	exchanged_fmt = []
@@ -146,8 +178,11 @@ def manip_data():
 		
 		cost_basis_usd = row["Cost Basis (CB)"]
 		curr_exchange["Cost Basis (USD)"] = cost_basis_usd
-
-		opened_rate = get_rate_value(rates, get_year_month(open_date))
+		
+		try:
+			opened_rate = get_rate_value(rates, get_year_month(open_date))
+		except Exception as e:
+			raise e
 		curr_exchange["Opened Date GBP Rate"] = opened_rate
 
 		cost_basis_gbp = calc_usd_gbp(cost_basis_usd, opened_rate)
@@ -159,7 +194,10 @@ def manip_data():
 		proceeds_usd = row["Proceeds"]
 		curr_exchange["Proceeds (USD)"] = proceeds_usd
 
-		closed_rate = get_rate_value(rates, get_year_month(close_date))
+		try:
+			closed_rate = get_rate_value(rates, get_year_month(close_date))
+		except Exception as e:
+			raise e
 		curr_exchange["Closed Date GBP Rate"] = closed_rate
 
 		proceeds_gbp = calc_usd_gbp(proceeds_usd, closed_rate)
@@ -199,5 +237,8 @@ def write_output(csv_dicts):
 # populate json data, pull realized values, calculate exchange rates, format output csv, output
 def convert_main():
 	populate_rates()
-	res = manip_data()
+	try:
+		res = manip_data()
+	except Exception as e:
+		raise e
 	write_output(res)

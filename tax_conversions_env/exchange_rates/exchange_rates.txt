@@ -71,3 +71,4 @@ December: 1.2778
 December: 1.3284
 !2016
 January: 1.5003
+December: 1.2399
