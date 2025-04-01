@@ -8,17 +8,18 @@
             "May": 1.2457,
             "June": 1.2709,
             "July": 1.2732,
+            "August": 1.3033,
             "September": 1.3032,
             "October": 1.3211,
             "November": 1.2952,
-            "December": 1.2662,
-            "August": 1.3033
+            "December": 1.2662
         },
         "2023": {
             "January": 1.2406,
             "February": 1.2392,
             "March": 1.2002,
             "April": 1.2231,
+            "May": 1.245,
             "June": 1.2366,
             "July": 1.2732,
             "August": 1.2886,
@@ -46,8 +47,8 @@
             "February": 1.3632,
             "March": 1.4051,
             "April": 1.3721,
-            "May": 1.393,
             "June": 1.4146,
+            "July": 1.3969,
             "August": 1.3674,
             "September": 1.3757,
             "October": 1.3646,
@@ -58,7 +59,6 @@
             "January": 1.3071,
             "February": 1.314,
             "March": 1.2952,
-            "April": 1.1763,
             "May": 1.2327,
             "June": 1.227,
             "July": 1.254,
@@ -66,7 +66,8 @@
             "September": 1.3184,
             "October": 1.2763,
             "November": 1.3163,
-            "December": 1.3303
+            "December": 1.3303,
+            "April": 1.1763
         },
         "2019": {
             "December": 1.2912

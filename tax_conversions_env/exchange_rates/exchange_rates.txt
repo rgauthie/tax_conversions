@@ -1,6 +1,6 @@
 !2024
 January: 1.2651
-February: 1.2690
+February: 1.269
 March: 1.2614
 April: 1.2693
 May: 1.2457
@@ -16,7 +16,7 @@ January: 1.2406
 February: 1.2392
 March: 1.2002
 April: 1.2231
-May: 1.2450
+May: 1.245
 June: 1.2366
 July: 1.2732
 August: 1.2886
@@ -42,7 +42,6 @@ January: 1.3497
 February: 1.3632
 March: 1.4051
 April: 1.3721
-May: 1.3930
 June: 1.4146
 July: 1.3969
 August: 1.3674
@@ -54,7 +53,6 @@ December: 1.3465
 January: 1.3071
 February: 1.314
 March: 1.2952
-April: 1.1763
 May: 1.2327
 June: 1.227
 July: 1.254
@@ -63,6 +61,7 @@ September: 1.3184
 October: 1.2763
 November: 1.3163
 December: 1.3303
+April: 1.1763
 !2019
 December: 1.2912
 !2018
@@ -71,4 +70,3 @@ December: 1.2778
 December: 1.3284
 !2016
 January: 1.5003
-December: 1.2399

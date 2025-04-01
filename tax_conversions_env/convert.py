@@ -92,6 +92,36 @@ def get_realized():
 			data.append(row)
 	return data
 
+
+def get_dividends():
+	curr_year = int(datetime.now().year)
+	last_year = curr_year - 1
+	in_file_name = "dividends_"+str(last_year)+"-"+str(curr_year)+".csv"
+	sharesless_file_name = "dividends_sharesless"+str(last_year)+"-"+str(curr_year)+".csv"
+	if not ntpath.exists("./input_data/"+in_file_name):
+		return
+
+	rows = []
+	with open("./input_data/"+in_file_name, "r") as f:
+		csvreader = csv.DictReader(f)
+		
+		for row in csvreader:
+			if row["Action"].lower() == "reinvest dividend" or row["Action"].lower() == "qual div reinvest" or row["Action"].lower() == "cash dividend" or row["Action"].lower() == "qualified dividend":
+				rows.append(row)
+
+
+	with open("./input_data/"+sharesless_file_name, "w", encoding='utf-8', newline='') as out:
+		csvwriter = csv.DictWriter(out, fieldnames=csvreader.fieldnames)
+		csvwriter.writeheader()
+		csvwriter.writerows(rows)
+
+	with open("./input_data/"+sharesless_file_name, "r") as csvfile:
+		csvreader = csv.DictReader(csvfile)
+		data = []
+		for row in csvreader:
+			data.append(row)
+	return data
+
 # convert mm/dd/yyyy value to {Year: Month}
 def get_year_month(from_date):
 	mm_dd_yyyy = from_date.split("/")
@@ -111,11 +141,13 @@ def get_rate_value(dataset, year_month):
 def calc_usd_gbp(usd_value_str, exchange_rate):
 	if ',' in usd_value_str:
 		usd_value_str = usd_value_str.replace(",", "")
-	usd_value = float(usd_value_str[1:])
+	if "$" in usd_value_str:
+		usd_value_str = usd_value_str.replace("$", "")
+	usd_value = float(usd_value_str)
 	return round(usd_value / exchange_rate, 2)
 
 def convert_float_to_currency(value, currency="gbp"):
-	symbol = "£"
+	symbol = ""
 	if currency == "usd":
 		symbol = "$"
 	negative = False
@@ -154,6 +186,66 @@ def save_rate(rate_value, month, year):
 	with open("./exchange_rates/exchange_rates.json", "w") as f:
 		json.dump(data, f, indent=4, sort_keys=False)
 	pop_from_json_to_txt()
+
+def get_totals(values, method="both"):
+	if method == "both":
+		return sum(values)
+	elif method == "gain":
+		gains = [value for value in values if value > 0]
+		return sum(gains)
+	elif method == "loss":
+		losses = [value for value in values if value < 0]
+		return sum(losses)
+
+def manip_dividends():
+	exchanged_fmt = []
+	
+	totals_usd = []
+	totals_gbp = []
+	data = get_dividends()
+	rates = get_rates()
+	for row in data:
+		curr_exchange = {}
+		date_issued = row["Date"]
+		curr_exchange["Date Issued"] = date_issued
+		
+		curr_type = "Qualified Dividend"
+		if "qual div reinvest" == row["Action"].lower():
+			curr_type = "Qual Div Reinvest"
+		elif "reinvest dividend" == row["Action"].lower():
+			curr_type = "Reinvest Dividend"
+		elif "cash dividend" == row["Action"].lower():
+			curr_type = "Cash Dividend"
+		curr_exchange["Dividend Type"] = curr_type
+		
+		curr_exchange["Symbol"] = row["Symbol"]
+
+		try:
+			convert_rate = get_rate_value(rates, get_year_month(date_issued))
+		except Exception as e:
+			raise e
+		curr_exchange["Conversion Rate"] = convert_rate
+
+		proceeds_usd = row["Amount"]
+		curr_exchange["Proceeds (USD)"] = proceeds_usd
+
+		proceeds_gbp = calc_usd_gbp(proceeds_usd, convert_rate)
+		curr_exchange["Proceeds (GBP)"] = convert_float_to_currency(proceeds_gbp)
+
+
+		if "," in proceeds_usd:
+			proceeds_usd = proceeds_usd.replace(",","")
+		if "$" in proceeds_usd:
+			proceeds_usd = proceeds_usd.replace("$","")
+		totals_usd.append(float(proceeds_usd))
+		totals_gbp.append(proceeds_gbp)
+
+		exchanged_fmt.append(curr_exchange)
+
+	totals_row = {"Date Issued": "", "Dividend Type": "", "Symbol": "", "Conversion Rate": "Total Proceeds", "Proceeds (USD)": convert_float_to_currency(sum(totals_usd), currency="usd"), "Proceeds (GBP)": convert_float_to_currency(sum(totals_gbp))}
+	exchanged_fmt.append(totals_row)
+	return exchanged_fmt
+
 
 def manip_data():
 	exchanged_fmt = []
@@ -218,21 +310,43 @@ def manip_data():
 
 		exchanged_fmt.append(curr_exchange)
 
-	totals_row = {"Symbol": "", "Asset Type": "", "Opened Date": "", "Cost Basis (USD)": "", "Opened Date GBP Rate": "", "Cost Basis (GBP)": "", "Closed Date": "", "Proceeds (USD)": "", "Closed Date GBP Rate": "", "Proceeds (GBP)": "Total Gain/Loss", "Gain/Loss (USD)": convert_float_to_currency(sum(totals_usd), currency="usd"), "Gain/Loss (GBP)": convert_float_to_currency(sum(totals_gbp))}
+	totals_gain_row = {"Symbol": "", "Asset Type": "", "Opened Date": "", "Cost Basis (USD)": "", "Opened Date GBP Rate": "", "Cost Basis (GBP)": "", "Closed Date": "", "Proceeds (USD)": "", "Closed Date GBP Rate": "", "Proceeds (GBP)": "Total Gain", "Gain/Loss (USD)": convert_float_to_currency(get_totals(totals_usd, method="gain"), currency="usd"), "Gain/Loss (GBP)": convert_float_to_currency(get_totals(totals_gbp, method="gain"))}
+	totals_loss_row = {"Symbol": "", "Asset Type": "", "Opened Date": "", "Cost Basis (USD)": "", "Opened Date GBP Rate": "", "Cost Basis (GBP)": "", "Closed Date": "", "Proceeds (USD)": "", "Closed Date GBP Rate": "", "Proceeds (GBP)": "Total Loss", "Gain/Loss (USD)": convert_float_to_currency(get_totals(totals_usd, method="loss"), currency="usd"), "Gain/Loss (GBP)": convert_float_to_currency(get_totals(totals_gbp, method="loss"))}
+	totals_row = {"Symbol": "", "Asset Type": "", "Opened Date": "", "Cost Basis (USD)": "", "Opened Date GBP Rate": "", "Cost Basis (GBP)": "", "Closed Date": "", "Proceeds (USD)": "", "Closed Date GBP Rate": "", "Proceeds (GBP)": "Total Gain/Loss", "Gain/Loss (USD)": convert_float_to_currency(get_totals(totals_usd), currency="usd"), "Gain/Loss (GBP)": convert_float_to_currency(get_totals(totals_gbp))}
+	
+	exchanged_fmt.append(totals_gain_row)
+	exchanged_fmt.append(totals_loss_row)
 	exchanged_fmt.append(totals_row)
 	return exchanged_fmt
 
 
+def write_dividends(csv_dicts):
+	fields = ["Date Issued", "Dividend Type", "Symbol", "Conversion Rate", "Proceeds (USD)", "Proceeds (GBP)"]
+	curr_year = int(datetime.now().year)
+	last_year = curr_year - 1
+	out_file_name = "dividends_converted_"+str(last_year)+"-"+str(curr_year)+".csv"
+	with open("./OUTPUTS/"+out_file_name, "w", encoding='utf-8', newline='') as csvfile:
+		writer = csv.DictWriter(csvfile, fieldnames=fields)
+		writer.writeheader()
+		writer.writerows(csv_dicts)
 
 def write_output(csv_dicts):
 	fields = ["Symbol", "Asset Type", "Opened Date", "Cost Basis (USD)", "Opened Date GBP Rate", "Cost Basis (GBP)", "Closed Date", "Proceeds (USD)", "Closed Date GBP Rate", "Proceeds (GBP)", "Gain/Loss (USD)", "Gain/Loss (GBP)"]
 	curr_year = int(datetime.now().year)
 	last_year = curr_year - 1
-	out_file_name = "output_"+str(last_year)+"-"+str(curr_year)+".csv"
+	out_file_name = "gain_loss_converted_"+str(last_year)+"-"+str(curr_year)+".csv"
 	with open("./OUTPUTS/"+out_file_name, "w", encoding='utf-8', newline='') as csvfile:
 		writer = csv.DictWriter(csvfile, fieldnames=fields)
 		writer.writeheader()
 		writer.writerows(csv_dicts)
+
+def convert_dividends():
+	populate_rates()
+	try:
+		res = manip_dividends()
+	except Exception as e:
+		raise e
+	write_dividends(res)
 
 # populate json data, pull realized values, calculate exchange rates, format output csv, output
 def convert_main():
